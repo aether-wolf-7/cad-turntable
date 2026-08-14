@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------
+# Propriedade intelectual do cliente. NUNCA versionar.
+# O STEP carrega a geometria completa, o CLP, os modulos de expansao
+# e o modulo de pesagem, com os codigos legiveis.
+# ---------------------------------------------------------------
+*.STEP
+*.step
+*.stp
+*.sldasm
+*.sldprt
+*.ipt
+*.iam
+*.x_t
+*.x_b
+00_entrada/
+
+# Derivados que ainda contem a geometria completa
+01_cad/*.glb
+01_cad/*.gltf
+02_render/*.blend
+02_render/*.blend1
+
+# Inventarios: listam as 238 pecas com nome, incluindo CLP, modulos de
+# expansao, modulo de pesagem, motor e redutor. E a lista de fornecedores
+# e a arquitetura de controle do cliente.
+01_cad/*.json
+
+# Dados comerciais do cliente (specs, modelo, textos da pagina)
+04_web/dados_*.json
+
+# Saidas pesadas e regeneraveis
+03_frames/
+06_entregas/*.html
+**/_calibracao.exr
+
+# Inteligencia comercial do projeto (concorrencia, valores, estrategia)
+PLANO.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
