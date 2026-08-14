@@ -28,6 +28,10 @@
 # Dados comerciais do cliente (specs, modelo, textos da pagina)
 04_web/dados_*.json
 
+# Configuracao real do projeto: carrega codigos de peca e de componente
+# do cliente. O repositorio so leva o projeto.exemplo.json, generico.
+projeto.json
+
 # Saidas pesadas e regeneraveis
 03_frames/
 06_entregas/*.html
@@ -46,3 +50,6 @@ venv/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Saida gerada pelo render (rotulos e posicoes dos pontos do cliente)
+04_web/hotspots.json

@@ -1,0 +1,122 @@
+{
+  "_nota": [
+    "Copy this file to projeto.json and edit it for your own machine.",
+    "projeto.json is gitignored so a client's part numbers never reach the repo.",
+    "Patterns are matched case-insensitively against the MESH name, which is where",
+    "cascadio puts the real STEP part name. Run --diag first: it lists which parts",
+    "are actually visible from outside, and those are the only sensible hotspots."
+  ],
+  "correcao_eixo_x_graus": -90.0,
+  "materiais": [
+    {
+      "nome": "Painted body",
+      "padroes": [
+        "HOUSING",
+        "COVER",
+        "CABINET"
+      ],
+      "cor": [
+        0.018,
+        0.018,
+        0.02
+      ],
+      "metallic": 0.0,
+      "roughness": 0.34
+    },
+    {
+      "nome": "Polished steel",
+      "padroes": [
+        "COLUMN",
+        "GUIDE-ROD"
+      ],
+      "cor": [
+        0.72,
+        0.73,
+        0.75
+      ],
+      "metallic": 1.0,
+      "roughness": 0.11
+    },
+    {
+      "nome": "Brushed steel",
+      "padroes": [
+        "TABLE",
+        "PLATEN"
+      ],
+      "cor": [
+        0.66,
+        0.67,
+        0.68
+      ],
+      "metallic": 1.0,
+      "roughness": 0.24
+    },
+    {
+      "nome": "Aluminium",
+      "padroes": [
+        "CROSSHEAD",
+        "TOP-PLATE"
+      ],
+      "cor": [
+        0.56,
+        0.57,
+        0.58
+      ],
+      "metallic": 0.9,
+      "roughness": 0.36
+    },
+    {
+      "nome": "Display",
+      "padroes": [
+        "HMI",
+        "SCREEN"
+      ],
+      "cor": [
+        0.03,
+        0.033,
+        0.038
+      ],
+      "metallic": 0.0,
+      "roughness": 0.16
+    }
+  ],
+  "pontos": [
+    {
+      "rotulo": "load_cell",
+      "padroes": [
+        "LOAD-CELL"
+      ]
+    },
+    {
+      "rotulo": "crosshead",
+      "padroes": [
+        "CROSSHEAD"
+      ]
+    },
+    {
+      "rotulo": "columns",
+      "padroes": [
+        "COLUMN"
+      ]
+    },
+    {
+      "rotulo": "table",
+      "padroes": [
+        "TABLE"
+      ]
+    },
+    {
+      "rotulo": "panel",
+      "padroes": [
+        "HMI"
+      ]
+    },
+    {
+      "rotulo": "drive",
+      "padroes": [
+        "CABINET"
+      ]
+    }
+  ],
+  "prefixo_proprio": "^(ACME|PN)-\\d+"
+}

@@ -1,0 +1,444 @@
+<title>__TITULO__</title>
+<style>
+/* ---------- tokens: light e o padrao ---------- */
+:root{
+  --ground:#EDEEEC; --surface:#FFFFFF; --surface-2:#F5F6F4;
+  --ink:#1A1E20; --ink-2:#3D4548; --muted:#6E7679;
+  --line:#D6D9D6; --line-soft:#E4E7E4;
+  --accent:#0E5C63; --accent-ink:#FFFFFF; --accent-soft:#E2EDEE;
+  --sand:#8C7A54; --sand-soft:#EFE9DC;
+  --warn:#8A5A1E; --warn-soft:#F5EADA;
+  --bar-bg:#1A1E20; --bar-ink:#EDEEEC;
+  --shadow:0 1px 2px rgba(26,30,32,.06), 0 8px 24px -12px rgba(26,30,32,.18);
+  --r:3px;
+  --sans:ui-sans-serif,"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono","SF Mono","Roboto Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#131617; --surface:#1B1F20; --surface-2:#22282A;
+    --ink:#E7EAE8; --ink-2:#BCC3C2; --muted:#8B9492;
+    --line:#2E3537; --line-soft:#262C2E;
+    --accent:#4FA3AB; --accent-ink:#0B1516; --accent-soft:#172E31;
+    --sand:#C0AC7E; --sand-soft:#2A2519;
+    --warn:#C99553; --warn-soft:#2B2214;
+    --bar-bg:#22282A; --bar-ink:#E7EAE8;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131617; --surface:#1B1F20; --surface-2:#22282A;
+  --ink:#E7EAE8; --ink-2:#BCC3C2; --muted:#8B9492;
+  --line:#2E3537; --line-soft:#262C2E;
+  --accent:#4FA3AB; --accent-ink:#0B1516; --accent-soft:#172E31;
+  --sand:#C0AC7E; --sand-soft:#2A2519;
+  --warn:#C99553; --warn-soft:#2B2214;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px -12px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0; text-wrap:balance; letter-spacing:-.02em; line-height:1.15; font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+.wrap{max-width:1120px; margin:0 auto; padding:0 24px}
+.mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.eyebrow{
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted);
+}
+
+/* ---------- tarja de demonstracao ---------- */
+.demo-bar{background:var(--bar-bg); color:var(--bar-ink); padding:14px 0}
+.demo-bar .wrap{display:flex; flex-wrap:wrap; gap:8px 22px; align-items:baseline}
+.demo-bar strong{font-size:13px; letter-spacing:.01em}
+.demo-bar span{font-size:13px; opacity:.78}
+
+/* ---------- cabecalho da pagina ---------- */
+header.topo{border-bottom:1px solid var(--line); background:var(--surface)}
+header.topo .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:18px}
+.marca{font-family:var(--mono); font-size:14px; letter-spacing:.18em; text-transform:uppercase; font-weight:600}
+.marca em{font-style:normal; color:var(--muted)}
+.nav{display:flex; gap:20px; font-size:14px; color:var(--ink-2)}
+@media (max-width:720px){ .nav{display:none} }
+
+/* ---------- hero: visualizador ---------- */
+.hero{background:var(--surface); border-bottom:1px solid var(--line)}
+.hero .wrap{
+  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:48px; padding-block:44px 52px; align-items:start;
+}
+@media (max-width:900px){ .hero .wrap{grid-template-columns:1fr; gap:32px} }
+
+.viewer{
+  position:relative; aspect-ratio:1/1; width:100%;
+  background:
+    radial-gradient(ellipse 62% 44% at 50% 92%, color-mix(in srgb, var(--ink) 12%, transparent), transparent 70%),
+    linear-gradient(178deg, var(--surface-2), color-mix(in srgb, var(--surface-2) 55%, var(--ground)));
+  border:1px solid var(--line-soft); border-radius:var(--r);
+  overflow:hidden; touch-action:pan-y; cursor:grab; user-select:none;
+}
+.viewer.arrastando{cursor:grabbing}
+.viewer img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; display:none; pointer-events:none;
+}
+.viewer img.on{display:block}
+
+.dica{
+  position:absolute; left:50%; bottom:14px; transform:translateX(-50%);
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); background:color-mix(in srgb, var(--surface) 82%, transparent);
+  border:1px solid var(--line-soft); border-radius:99px; padding:5px 13px;
+  transition:opacity .3s; backdrop-filter:blur(4px);
+}
+.dica.some{opacity:0}
+
+.hot{
+  position:absolute; width:26px; height:26px; margin:-13px 0 0 -13px;
+  border-radius:50%; border:0; padding:0; cursor:pointer;
+  background:transparent; transition:opacity .18s;
+}
+.hot::before{
+  content:""; position:absolute; inset:8px; border-radius:50%;
+  background:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--surface) 78%, transparent);
+}
+.hot::after{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  border:1px solid var(--accent); opacity:.45; transform:scale(.55);
+  transition:transform .22s ease, opacity .22s ease;
+}
+.hot:hover::after,.hot:focus-visible::after{transform:scale(1); opacity:.9}
+.hot[aria-pressed="true"]::after{transform:scale(1); opacity:1; border-width:2px}
+.hot[hidden]{display:none}
+
+/* ---------- painel do componente ---------- */
+.painel{display:flex; flex-direction:column; gap:22px}
+.painel h1{font-size:clamp(30px,4.4vw,44px)}
+.painel .sub{color:var(--ink-2); font-size:17px; max-width:52ch}
+
+.ficha-comp{
+  border:1px solid var(--line); border-radius:var(--r);
+  background:var(--surface-2); padding:20px; display:flex; flex-direction:column; gap:14px;
+  min-height:220px;
+}
+.ficha-comp h3{font-size:19px}
+.ficha-comp p{font-size:15px; color:var(--ink-2); max-width:48ch}
+.ficha-comp .vazio{color:var(--muted); font-size:15px}
+.linhas{display:flex; flex-direction:column; gap:0; margin-top:2px}
+.linha{
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  padding:9px 0; border-top:1px solid var(--line-soft);
+}
+.linha:first-child{border-top:0}
+.linha dt{font-size:14px; color:var(--muted)}
+.linha dd{margin:0; display:flex; align-items:baseline; gap:9px; font-family:var(--mono); font-size:14px; font-variant-numeric:tabular-nums}
+
+/* selo de procedencia: encoda de onde veio cada numero */
+.selo{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  padding:2px 6px; border-radius:2px; white-space:nowrap; font-weight:600;
+}
+.selo.cad{background:var(--accent-soft); color:var(--accent)}
+.selo.exemplo{background:var(--sand-soft); color:var(--sand)}
+.selo.pendente{background:var(--warn-soft); color:var(--warn)}
+
+/* ---------- secoes ---------- */
+section{padding-block:56px; border-bottom:1px solid var(--line)}
+section.claro{background:var(--surface)}
+.cab{display:flex; flex-direction:column; gap:8px; margin-bottom:28px; max-width:60ch}
+.cab h2{font-size:clamp(23px,2.7vw,30px)}
+.cab p{color:var(--ink-2)}
+
+.ensaios{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1px; background:var(--line)}
+.ensaio{background:var(--surface); padding:22px 20px; display:flex; flex-direction:column; gap:7px}
+.ensaio h3{font-size:17px}
+.ensaio p{font-size:14.5px; color:var(--ink-2)}
+.ensaio .n{font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.1em}
+
+.tabela-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:460px}
+th,td{text-align:left; padding:11px 18px; border-top:1px solid var(--line-soft); font-size:14.5px}
+thead th{
+  border-top:0; background:var(--surface-2); font-family:var(--mono); font-weight:600;
+  font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+}
+tbody td:nth-child(2){font-family:var(--mono); font-variant-numeric:tabular-nums}
+tbody td:last-child{text-align:right; width:1%}
+
+/* ---------- bloco de download ---------- */
+.download{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,360px); gap:44px; align-items:center;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  padding:34px; box-shadow:var(--shadow);
+}
+@media (max-width:820px){ .download{grid-template-columns:1fr; gap:26px; padding:24px} }
+.download h2{font-size:clamp(21px,2.4vw,27px); margin-bottom:10px}
+.download p{color:var(--ink-2); font-size:15.5px; max-width:46ch}
+form{display:flex; flex-direction:column; gap:10px}
+label{display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--muted)}
+input{
+  font:inherit; font-size:15px; padding:10px 12px; border-radius:var(--r);
+  border:1px solid var(--line); background:var(--surface-2); color:var(--ink);
+}
+input:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:transparent}
+button.cta{
+  font:inherit; font-weight:600; font-size:15px; padding:12px 18px; margin-top:4px;
+  border:0; border-radius:var(--r); background:var(--accent); color:var(--accent-ink);
+  cursor:pointer; transition:filter .15s;
+}
+button.cta:hover{filter:brightness(1.1)}
+.aviso-form{font-size:12.5px; color:var(--muted); margin-top:2px}
+
+.opcionais{display:flex; flex-wrap:wrap; gap:9px}
+.opcional{
+  display:flex; align-items:baseline; gap:9px; padding:9px 14px;
+  border:1px solid var(--line); border-radius:99px; background:var(--surface); font-size:14px;
+}
+.opcional span{font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.06em}
+
+.comparacao{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px}
+.cmp{border-left:2px solid var(--accent); padding:2px 0 2px 16px; display:flex; flex-direction:column; gap:5px}
+.cmp h3{font-size:15.5px}
+.cmp p{font-size:14px; color:var(--ink-2)}
+
+footer{padding-block:34px; color:var(--muted); font-size:13.5px}
+footer .wrap{display:flex; flex-wrap:wrap; gap:10px 28px; justify-content:space-between}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.01ms !important}
+}
+</style>
+
+<div class="demo-bar"><div class="wrap" id="aviso"></div></div>
+
+<header class="topo"><div class="wrap">
+  <div class="marca" id="marca"></div>
+  <nav class="nav" id="nav"></nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <div class="viewer" id="viewer" aria-label="Vista giratória do equipamento. Arraste para girar.">
+      <div class="dica" id="dica">arraste para girar</div>
+    </div>
+  </div>
+  <div class="painel">
+    <div>
+      <div class="eyebrow" id="cod"></div>
+      <h1 id="chamada"></h1>
+    </div>
+    <p class="sub" id="resumo"></p>
+    <div class="ficha-comp" id="ficha-comp">
+      <p class="vazio">Clique em um ponto sobre a máquina para ver a especificação daquele componente.</p>
+    </div>
+  </div>
+</div></div>
+
+<section class="claro"><div class="wrap">
+  <div class="cab">
+    <div class="eyebrow">Aplicações</div>
+    <h2>Três ensaios normatizados no mesmo equipamento</h2>
+    <p>Cada ensaio usa um dispositivo diferente sobre a mesma mesa, o que evita comprar uma prensa dedicada para cada norma.</p>
+  </div>
+  <div class="ensaios" id="ensaios"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="cab">
+    <div class="eyebrow">Especificações</div>
+    <h2>Ficha técnica</h2>
+    <p>É esta tabela que gera o PDF do datasheet. Alterar um valor aqui muda a página, o PDF e o balão do ponto clicável ao mesmo tempo.</p>
+  </div>
+  <div class="tabela-wrap">
+    <table>
+      <thead><tr><th>Característica</th><th>Valor</th><th>Origem</th></tr></thead>
+      <tbody id="ficha"></tbody>
+    </table>
+  </div>
+</div></section>
+
+<section class="claro"><div class="wrap">
+  <div class="cab">
+    <div class="eyebrow">Acessórios</div>
+    <h2>Itens compatíveis com esta configuração</h2>
+    <p>No site final, esta lista muda conforme a configuração escolhida, e os itens selecionados entram no PDF que o cliente baixa.</p>
+  </div>
+  <div class="opcionais" id="opcionais"></div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="download">
+    <div>
+      <div class="eyebrow" style="margin-bottom:9px">Datasheet</div>
+      <h2>Baixe a ficha técnica completa em PDF</h2>
+      <p>Este é o momento de conversão da página. O comprador industrial não fecha no site: ele baixa a ficha, leva para a reunião interna e o comercial retoma sabendo qual máquina ele olhou.</p>
+    </div>
+    <form id="form">
+      <label>Nome<input type="text" name="nome" autocomplete="name" required></label>
+      <label>Empresa ou instituição<input type="text" name="empresa" autocomplete="organization" required></label>
+      <label>E-mail<input type="email" name="email" autocomplete="email" required></label>
+      <button class="cta" type="submit">Baixar datasheet em PDF</button>
+      <p class="aviso-form" id="aviso-form">Formulário desativado nesta demonstração.</p>
+    </form>
+  </div>
+</div></section>
+
+<section class="claro"><div class="wrap">
+  <div class="cab">
+    <div class="eyebrow">O que muda</div>
+    <h2 id="cmp-titulo"></h2>
+  </div>
+  <div class="comparacao" id="comparacao"></div>
+</div></section>
+
+<footer><div class="wrap">
+  <span id="rodape-nota"></span>
+  <span class="mono" id="rodape"></span>
+</div></footer>
+
+<script>
+const D = window.__DEMO__;
+
+/* ---------- monta o visualizador ---------- */
+const viewer = document.getElementById("viewer");
+const dica = document.getElementById("dica");
+const N = D.frames.length;
+let frame = 0;
+
+const imgs = D.frames.map((src, i) => {
+  const el = document.createElement("img");
+  el.src = src;
+  el.alt = i === 0 ? `${D.dados.maquina.nome}, vista frontal` : "";
+  if (i === 0) el.classList.add("on");
+  viewer.insertBefore(el, dica);
+  return el;
+});
+
+/* ---------- pontos clicaveis ---------- */
+const pontos = Object.entries(D.hotspots.pontos).map(([chave, h]) => {
+  const b = document.createElement("button");
+  b.className = "hot";
+  b.type = "button";
+  b.setAttribute("aria-pressed", "false");
+  b.setAttribute("aria-label", (D.dados.pontos[chave] || {}).titulo || chave);
+  b.addEventListener("click", (e) => { e.stopPropagation(); abrir(chave); });
+  viewer.appendChild(b);
+  return { chave, el: b, pos: h.pos };
+});
+
+function desenhar() {
+  imgs.forEach((el, i) => el.classList.toggle("on", i === frame));
+  for (const p of pontos) {
+    const q = p.pos[frame];
+    if (!q || !q.v) { p.el.hidden = true; continue; }
+    p.el.hidden = false;
+    p.el.style.left = (q.x * 100).toFixed(2) + "%";
+    p.el.style.top = (q.y * 100).toFixed(2) + "%";
+  }
+}
+
+/* ---------- arrastar para girar ---------- */
+let arrastando = false, x0 = 0, f0 = 0, mexeu = false;
+const passo = () => Math.max(1, viewer.clientWidth) / N * 1.35;
+
+viewer.addEventListener("pointerdown", (e) => {
+  if (e.target.classList.contains("hot")) return;
+  arrastando = true; mexeu = false; x0 = e.clientX; f0 = frame;
+  viewer.classList.add("arrastando");
+  viewer.setPointerCapture(e.pointerId);
+});
+viewer.addEventListener("pointermove", (e) => {
+  if (!arrastando) return;
+  const d = e.clientX - x0;
+  if (Math.abs(d) > 3) { mexeu = true; dica.classList.add("some"); }
+  frame = ((f0 - Math.round(d / passo())) % N + N) % N;
+  desenhar();
+});
+const soltar = () => { arrastando = false; viewer.classList.remove("arrastando"); };
+viewer.addEventListener("pointerup", soltar);
+viewer.addEventListener("pointercancel", soltar);
+
+viewer.tabIndex = 0;
+viewer.addEventListener("keydown", (e) => {
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  e.preventDefault();
+  frame = ((frame + (e.key === "ArrowRight" ? 1 : -1)) % N + N) % N;
+  dica.classList.add("some");
+  desenhar();
+});
+
+/* giro de apresentacao ate o primeiro toque */
+const reduzido = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (!reduzido) {
+  let volta = 0;
+  const t = setInterval(() => {
+    if (arrastando || mexeu || volta >= N) { clearInterval(t); return; }
+    frame = (frame + 1) % N; volta++; desenhar();
+  }, 70);
+}
+
+/* ---------- painel do componente ---------- */
+const selo = (o) => `<span class="selo ${o}">${o === "cad" ? "CAD" : o}</span>`;
+const caixa = document.getElementById("ficha-comp");
+let aberto = null;
+
+function abrir(chave) {
+  const d = D.dados.pontos[chave];
+  if (!d) return;
+  aberto = chave;
+  pontos.forEach((p) => p.el.setAttribute("aria-pressed", String(p.chave === chave)));
+  caixa.innerHTML =
+    `<h3>${d.titulo}</h3><p>${d.texto}</p><dl class="linhas">` +
+    d.specs.map((s) => `<div class="linha"><dt>${s.rotulo}</dt>
+      <dd>${s.valor}${selo(s.origem)}</dd></div>`).join("") +
+    `</dl>`;
+}
+
+/* ---------- conteudo vindo do JSON ---------- */
+const P = D.dados.pagina;
+
+document.getElementById("aviso").innerHTML =
+  `<strong>${P.aviso_titulo}</strong>` + P.aviso.map((t) => `<span>${t}</span>`).join("");
+document.getElementById("marca").innerHTML =
+  `${P.marca} <em>${P.marca_sub}</em>`;
+document.getElementById("nav").innerHTML =
+  P.nav.map((t) => `<span>${t}</span>`).join("");
+document.getElementById("cmp-titulo").textContent = P.comparacao_titulo;
+document.getElementById("comparacao").innerHTML = P.comparacao
+  .map((c) => `<div class="cmp"><h3>${c.titulo}</h3><p>${c.texto}</p></div>`).join("");
+document.getElementById("rodape-nota").textContent = P.rodape;
+
+const m = D.dados.maquina;
+document.getElementById("cod").textContent = m.fabricante + " · " + m.codigo;
+document.getElementById("chamada").textContent = m.chamada;
+document.getElementById("resumo").textContent = m.resumo;
+document.getElementById("rodape").textContent =
+  m.codigo + " · CAD " + m.codigo_cad + " · " + N + " quadros renderizados";
+
+document.getElementById("ensaios").innerHTML = D.dados.ensaios
+  .map((e, i) => `<div class="ensaio"><div class="n">0${i + 1}</div>
+    <h3>${e.nome}</h3><p>${e.descricao}</p></div>`).join("");
+
+document.getElementById("ficha").innerHTML = D.dados.ficha
+  .map((f) => `<tr><td>${f.rotulo}</td><td>${f.valor}</td><td>${selo(f.origem)}</td></tr>`).join("");
+
+document.getElementById("opcionais").innerHTML = D.dados.opcionais
+  .map((o) => `<div class="opcional">${o.nome}<span>${o.nota}</span></div>`).join("");
+
+document.getElementById("form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const a = document.getElementById("aviso-form");
+  a.textContent = "No site final, o PDF sai aqui já com a configuração escolhida, e o comercial recebe o contato com a máquina que a pessoa olhou.";
+  a.style.color = "var(--accent)";
+});
+
+desenhar();
+</script>
